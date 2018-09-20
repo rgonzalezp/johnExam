@@ -3,7 +3,7 @@
 /**
  * Module dependencies.
  */
-
+var db = require("../server/models/db.js");
 var app = require('../app');
 var debug = require('debug')('johnExam:server');
 var http = require('http');
@@ -28,6 +28,22 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+//Database connection.. working
+
+db.connect(function(err){
+  if(err){
+    console.log("Problem connecting to Mongo");
+    console.log(err);
+    process.exit(1);
+  }
+  else {
+    console.log("Connection successful to mongo");
+    server.listen(port);
+    server.on('error', onError);
+    server.on('listening', onListening);
+  }
+});
 
 /**
  * Normalize a port into a number, string, or false.
