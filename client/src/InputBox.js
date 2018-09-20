@@ -9,10 +9,13 @@ class InputBox extends Component {
 
   render() {
 
-//When using this component invoke it like this <SearchBox onSearch={this.onSearch.bind(this)} />, and make a onSearch Method in the component you use this component
+//When using this component invoke it like this <InputBox onSearch={this.onSearch.bind(this)} />, and make a InputBox Method in the component you use this component
     return (
       <div className="InputBox">
       <input type="text"
+      ref={(input) => this.input = input}
+      onKeyPress = {this.onKeyPress.bind(this)}/>
+      <input type="file"
       ref={(input) => this.input = input}
       onKeyPress = {this.onKeyPress.bind(this)}/>
       </div>
