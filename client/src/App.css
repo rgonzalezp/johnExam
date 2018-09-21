@@ -1,3 +1,19 @@
+.graph{
+	margin-left:2rem;
+	margin-top:2rem;
+}
+
 .btn{
+	font-family: 'Roboto', sans-serif;
 	margin-bottom:1rem;
+	margin-left:1rem;
+	margin-right:1rem;
+}
+
+textarea{
+	font-family: 'Roboto', sans-serif;
+}
+
+p{
+	font-family: 'Roboto', sans-serif;
 }

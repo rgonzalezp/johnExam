@@ -1,5 +1,5 @@
 ## Project Information:
-Description of the project
+This project is a minimalistic version of the original Vega-Editor. You can see your data visualizations here, just like in the vega editor (but it is less cluttered). The input of data works two ways, manually or by a csv.
 
 ## Author:
 Ricardo Gonzalez
