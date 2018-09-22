@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import WarningModal from './WarningModal.js'
 import vegaEmbed from 'vega-embed';
+import axios from 'axios';
 
 class App extends Component {
 
@@ -10,19 +11,24 @@ constructor(props)
     super(props);
     this.warningJson = React.createRef();
     this.warningData = React.createRef();
-    this.handleChange = this.handleChange.bind(this);
+    this.handleChangeData = this.handleChangeData.bind(this);
+    this.handleChangeSpec = this.handleChangeSpec.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
   }
+state = {
+      spec:{},
+      error:'',
+      data:{}
+    };
 
 makeGraph(){
-  var spec = null;
   var myData = null;
   var dataName = null;
   try{
-    spec = JSON.parse(this.divTarget.value);
-    dataName = spec.data.name;
+    dataName = this.state.spec.data.name;
   } catch (err){
-    this.warningJson.current.toggle("jsonformat");
+    this.setState({error:err.toString()})
+
     //this checks for malformed JSON, it doesnt check that the attributes are correct
   }
 
@@ -30,8 +36,6 @@ makeGraph(){
     var makingData = JSON.parse(this.divTargetData.value);
     myData = makingData.data;
   } catch (err){
-      this.warningData.current.toggle("dataProblem");
-      //this checks for data uploaded
   }
     var config = {
       // default view background color
@@ -44,18 +48,35 @@ makeGraph(){
         tickColor: "black"
       }
     };
-      
 
-    const view = vegaEmbed(this.barChart, spec, { config: config, tooltip: { theme: 'dark' }, defaultStyle: true }).catch(error => {return})
-      .then((res) =>  res.view.insert(dataName, myData).run()).catch(error => console.log(error));
+
+    const view = vegaEmbed(this.barChart, this.state.spec, { config: config, tooltip: { theme: 'dark' }, defaultStyle: true }).catch(err => {
+    console.log("Not valid Json yet")})
+    .then((res) =>  res.view.insert(dataName, this.state.data.data).run())
+    .catch(error => console.log("Failure to insert graphic"));
+
   }
 
-  handleChange(event){
-    try{
+  handleChangeData(event){
+  try{
     this.divTargetData.value=JSON.stringify(event,null,2);
+    const json = this.divTargetData.value
+    this.setState({data: JSON.parse(json)});
   }
   catch(err){
 
+  }
+}
+
+ handleChangeSpec(event){
+  try{
+    const json = this.divTarget.value
+    this.setState({spec: JSON.parse(json)});
+    this.makeGraph();
+  }
+  catch(err){
+    console.log(err);
+ this.setState({error:err.toString()})
   }
 }
 
@@ -69,15 +90,23 @@ makeGraph(){
       header: true,
       download: true,
       skipEmptyLines: true,
-      complete: this.handleChange
+      complete: this.handleChangeData
     });
   } catch (err){
     this.warning.current.toggle("fileformat");
     //this checks for file formatting JSON
   }
 }
-
   saveGraph(){
+
+console.log(this.state.spec);
+    axios.post('/graphs',this.state.spec)
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
   }
 
@@ -90,14 +119,6 @@ makeGraph(){
           <h1 className="App-title">Vega-lite-editor minimalistic</h1>
           <WarningModal ref={this.warningData}></WarningModal>
           <WarningModal ref={this.warningJson}></WarningModal>
-          <button className="btn btn-primary" onClick={() => {
-          var obj = {
-            "x": "John",
-            "y": {"field":"Also John", "type": "quantitative"}
-          };
-          this.state.json =obj;
-          this.divTarget.value=JSON.stringify(obj,null,2)
-           }}>toJson</button>
           <button className="btn btn-primary" onClick={() =>  this.makeGraph()}>Vega Graph</button>
           <input type="file"
       ref={(input) => this.input = input}
@@ -108,11 +129,11 @@ makeGraph(){
           <div className="row">
 
           <div className="col-xs-12 col-sm-4">
-
           <p className="">
           Input your spec in this area. Named datasources
           </p>
           <textarea
+          onChange={this.handleChangeSpec}
           cols="43"
           rows="28"
           ref= {(div) => this.divTarget = div}
@@ -124,9 +145,10 @@ makeGraph(){
           <div className="col-xs-12 col-sm-4">
 
           <p className="">
-          Input your csv or an array of JSON objects
+          Input your csv or an array of JSON objects (Data)
           </p>
           <textarea
+          onChange={() =>  this.makeGraph()}
           cols="43"
           rows="28"
           ref= {(div) => this.divTargetData = div}
@@ -139,8 +161,8 @@ makeGraph(){
           <div className="col-xs-12 col-sm-4">
           <button className="btn btn-primary" onClick={() =>  this.saveGraph()}>Save this Graph</button>
           <div className="graph" ref= {(div) => this.barChart = div}>
-          </div>
-
+      {this.state.error}
+      </div>  
           </div>
           </div>
           </div>
