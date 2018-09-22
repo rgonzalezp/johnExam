@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import WarningModal from './WarningModal.js'
+import WarningModal from './helpers/WarningModal.js'
+import CommentModal from './helpers/CommentModal.js'
 import vegaEmbed from 'vega-embed';
 import axios from 'axios';
 
@@ -10,6 +11,7 @@ constructor(props)
 {
     super(props);
     this.warning = React.createRef();
+    this.comment = React.createRef();
     this.handleChangeData = this.handleChangeData.bind(this);
     this.handleChangeSpec = this.handleChangeSpec.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
@@ -22,7 +24,6 @@ constructor(props)
   }
 
 makeGraph(){
-  var myData = null;
   var dataName = null;
   try{
     dataName = this.state.spec.data.name;
@@ -31,11 +32,6 @@ makeGraph(){
     //this checks for malformed JSON, it doesnt check that the attributes are correct
   }
 
-  try{
-    var makingData = JSON.parse(this.divTargetData.value);
-    myData = makingData.data;
-  } catch (err){
-  }
     var config = {
       // default view background color
       // covers the entire view component
@@ -61,9 +57,10 @@ makeGraph(){
     this.divTargetData.value=JSON.stringify(event,null,2);
     const json = this.divTargetData.value
     this.setState({data: JSON.parse(json)});
+    this.makeGraph();
   }
   catch(err){
-
+    this.setState({data: ""});
   }
 }
 
@@ -93,8 +90,6 @@ makeGraph(){
       complete: this.handleChangeData
     });
   } catch (err){
-    this.warning.current.toggle("fileformat");
-    //this checks for file formatting JSON
   }
 }
 
@@ -152,7 +147,7 @@ componentDidMount() {
         <div className="container">
           <h1 className="App-title">Vega-lite-editor minimalistic</h1>
           <WarningModal ref={this.warning}></WarningModal>
-          <button className="btn btn-primary" onClick={() =>  this.makeGraph()}>Vega Graph</button>
+          <button className="btn btn-primary" onClick={() =>  this.makeGraph()}>Update Graph</button>
           <input type="file"
       ref={(input) => this.input = input}
       name="Add"
@@ -181,7 +176,7 @@ componentDidMount() {
           Input your csv or an array of JSON objects (Data)
           </p>
           <textarea
-          onChange={() =>  this.makeGraph()}
+          onChange={this.handleChangeData}
           cols="43"
           rows="28"
           ref= {(div) => this.divTargetData = div}
@@ -191,8 +186,11 @@ componentDidMount() {
 
 
           
-          <div className="col-xs-12 col-sm-4">
+          <div className="col-xs-12 col-sm-4 align-content-center">
+          <div className="row d-flex justify-content-center">
           <button className="btn btn-primary" onClick={() =>  this.saveGraph()}>Save this Graph</button>
+          <button className="btn btn-primary" onClick={() => this.comment.current.simpleToggle()}>Send a comment</button>
+          </div>
           <div className="graph" ref= {(div) => this.barChart = div}>
           {this.state.error}</div>  
           </div>
@@ -203,6 +201,7 @@ componentDidMount() {
           {this.renderLatestVis()}
 
           </div>
+          <CommentModal ref={this.comment}></CommentModal>
           </div>
           </div>
         </div>

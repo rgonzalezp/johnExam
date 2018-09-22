@@ -16,24 +16,26 @@ class WarningModal extends Component {
 	state = {
 		modal:false,
 		tit:'default',
-		content:''
+		content:'',
+		butt:''
 	};
 
 
 	toggle = (e) => {
-		console.log(e);
 		if(e ==="success")
 		{
 		this.setState({
 			modal: !this.state.modal,
 			tit:'Your graph was uploaded succesfully',
-			content:"Eureka! continue making new visualizations"
+			content:"Eureka! continue making new visualizations",
+			butt:"Okay, thank you good sir"
 		});
 	} else {
 		this.setState({
 			modal: !this.state.modal,
 			tit:'Incorrect file format: something went wrong',
-			content:"There was an error uploading your visualizations, make sure you have a valid schema and data"
+			content:"There was an error uploading your visualizations, make sure you have a valid schema and data",
+			butt:"OK! ill try to fix it"
 		});
 		}
 	}
@@ -58,7 +60,7 @@ class WarningModal extends Component {
 			<Label for="plan"> {this.state.content}</Label>
 			<Button color= "dark"
 			style={{marginTop:'2rem'}}
-			onClick={this.simpleToggle}>OK! ill try to fix it</Button>
+			onClick={this.simpleToggle}>{this.state.butt}</Button>
 			
 			</ModalBody>
 			</Modal>

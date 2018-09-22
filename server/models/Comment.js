@@ -24,15 +24,16 @@ Object that represents the messages in a group or club board
 }
 */
 
-var Graph = {};
+var Comment = {};
 
-Graph.create = function(graph, callback){
 
-var client = db.get().collection("graphs");
-  client.insert(graph, function(err, insertedDocs){
+Comment.create = function(comment, callback){
+
+var client = db.get().collection("comments");
+  client.insert(comment, function(err, insertedDocs){
     callback(err, insertedDocs);
   });
 };
 
 
-module.exports = Graph;
+module.exports = Comment;
