@@ -1,6 +1,8 @@
 ## Project Information:
 This project is a minimalistic version of the original Vega-Editor. You can see your data visualizations here, just like in the vega editor (but it is less cluttered). The input of data works two ways, manually or by a csv.
 
+Deployed in heroku, watch the demo: https://vegalite-min-editor.herokuapp.com/
+
 ## Author:
 Ricardo Gonzalez
 
