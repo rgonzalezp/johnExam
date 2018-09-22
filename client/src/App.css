@@ -17,3 +17,7 @@ textarea{
 p{
 	font-family: 'Roboto', sans-serif;
 }
+
+.App-title{
+	margin-top:1rem!important;
+}

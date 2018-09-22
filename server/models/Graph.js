@@ -24,21 +24,26 @@ Object that represents the messages in a group or club board
 }
 */
 
-var Search = {};
+var Graph = {};
 
-Search.findById = function(id_search, callback){
-  var searches = db.get().collection("searches");
-  searches.findOne({login:id_search}, function(err, user){
+Graph.findTwenty = function (graph, callback){
+  var graphs = db.get().collection("graphs");
+   graphs.find({},function(err,docs){callback(err,docs)}).limit(20);
+};
+Graph.findById = function(id_search, graphs){
+  var graphs = db.get().collection("graphs");
+  graphs.findOne({login:id_search}, function(err, user){
     callback(err, user);
   });
 };
 
-Search.create = function(search, callback){
-  var searches = db.get().collection("searches");
-  searches.insertOne(search, function(err, insertedDocs){
+Graph.create = function(graph, callback){
+
+var client = db.get().collection("graphs");
+  client.insert(graph, function(err, insertedDocs){
     callback(err, insertedDocs);
   });
 };
 
 
-module.exports = Search;
+module.exports = Graph;

@@ -22,18 +22,18 @@ class WarningModal extends Component {
 
 	toggle = (e) => {
 		console.log(e);
-		if(e ==="jsonformat")
+		if(e ==="success")
 		{
 		this.setState({
 			modal: !this.state.modal,
-			tit:'JSON malformed',
-			content:"Your JSON is in an invalid format and we couldn't read it!"
+			tit:'Your graph was uploaded succesfully',
+			content:"Eureka! continue making new visualizations"
 		});
 	} else {
 		this.setState({
 			modal: !this.state.modal,
 			tit:'Incorrect file format: something went wrong',
-			content:"Check if your CSV file is correct or if you uploaded the correct file"
+			content:"There was an error uploading your visualizations, make sure you have a valid schema and data"
 		});
 		}
 	}

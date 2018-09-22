@@ -9,17 +9,17 @@ class App extends Component {
 constructor(props)
 {
     super(props);
-    this.warningJson = React.createRef();
-    this.warningData = React.createRef();
+    this.warning = React.createRef();
     this.handleChangeData = this.handleChangeData.bind(this);
     this.handleChangeSpec = this.handleChangeSpec.bind(this);
     this.uploadFile = this.uploadFile.bind(this);
-  }
-state = {
+    this.state={
       spec:{},
       error:'',
-      data:{}
-    };
+      data:{},
+      viz:[]
+    }
+  }
 
 makeGraph(){
   var myData = null;
@@ -28,7 +28,6 @@ makeGraph(){
     dataName = this.state.spec.data.name;
   } catch (err){
     this.setState({error:err.toString()})
-
     //this checks for malformed JSON, it doesnt check that the attributes are correct
   }
 
@@ -76,6 +75,7 @@ makeGraph(){
   }
   catch(err){
     console.log(err);
+ this.setState({spec:""})
  this.setState({error:err.toString()})
   }
 }
@@ -97,19 +97,53 @@ makeGraph(){
     //this checks for file formatting JSON
   }
 }
-  saveGraph(){
 
-console.log(this.state.spec);
-    axios.post('/graphs',this.state.spec)
+saveGraph(){
+
+const data = {
+  data: this.state.spec.data,
+  mark: this.state.spec.mark,
+  encoding: this.state.spec.encoding,
+  timestamp: Math.floor(Date.now() / 1000)
+}
+
+var self = this;
+if(data.data)
+{
+    axios.post('/graphs',data)
   .then(function (response) {
+    self.warning.current.toggle("success");
     console.log(response);
   })
   .catch(function (error) {
     console.log(error);
   });
+}
+else
+{
+  this.warning.current.toggle("fail");
+}
+}
 
-  }
+renderLatestVis() {
+  if(this.state.viz instanceof Array)
+  {
+  return this.state.viz.map((specs) =>  <li className="list-group-item" key ={specs.timestamp}>{JSON.stringify(specs,null,2)}</li>);
+} else {
+  return "";
+}
+}
+componentDidMount() {
+  var self = this;
+ axios.get('/graphs')
+  .then(function (response) {
+    self.setState({viz:response.data})
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
+}
 
   render() {
     return (
@@ -117,8 +151,7 @@ console.log(this.state.spec);
         <header className="App-header">
         <div className="container">
           <h1 className="App-title">Vega-lite-editor minimalistic</h1>
-          <WarningModal ref={this.warningData}></WarningModal>
-          <WarningModal ref={this.warningJson}></WarningModal>
+          <WarningModal ref={this.warning}></WarningModal>
           <button className="btn btn-primary" onClick={() =>  this.makeGraph()}>Vega Graph</button>
           <input type="file"
       ref={(input) => this.input = input}
@@ -161,8 +194,14 @@ console.log(this.state.spec);
           <div className="col-xs-12 col-sm-4">
           <button className="btn btn-primary" onClick={() =>  this.saveGraph()}>Save this Graph</button>
           <div className="graph" ref= {(div) => this.barChart = div}>
-      {this.state.error}
-      </div>  
+          {this.state.error}</div>  
+          </div>
+          </div>
+          <div className="row">
+          <div className="container-fluid">
+          <h1 className="App-title">Last 20 visualizations uploaded to the DB</h1>
+          {this.renderLatestVis()}
+
           </div>
           </div>
           </div>
