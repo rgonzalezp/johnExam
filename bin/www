@@ -7,6 +7,7 @@ var db = require("../server/models/db.js");
 var server = require('../server');
 var debug = require('debug')('johnExam:server');
 var http = require('http');
+const path = require('path');
 
 /**
  * Get port from environment and store in Express.
@@ -18,6 +19,13 @@ server.set('port', port);
 /**
  * Create HTTP server.
  */
+
+ if(process.env.NODE_ENV === 'production'){
+  app.use(express.static('client/build'));
+  app.get('*', (req,res)=>{
+    res.sendFile(path.resolve(__dirname,'client','build','index.html'));
+  });
+ }
 
 var server = http.createServer(server);
 
