@@ -5,14 +5,13 @@ This project is a minimalistic version of the original Vega-Editor. You can see 
 Ricardo Gonzalez
 
 ## Exam's "Secret Sauce":
-Your secret sauce
+The design is very simple and makes the user feel at home. It also permits the user to take advantage of the specs that are kept in the database by providing them at the footer. Besides this, the feedback the user receive about everything he does lets him use the tool really effectively.
 
 ## Implementation Bonus:
-Bonus if you do anything else extra
+Latest 20 visualizations stay in the cache so the app doesn't need to fetch new visualizations until the user uploads a new one
 
 ## Building locally:
 You must execute npm install in both /client and /root folders.  
-You must set the MONGODB_URI env variable in the shell where you are going to execute the backend.  
 run npm start in the /root folder  
 run npm start in the /client folder  
 optionally, you can use the special script npm run dev to run both client and server in a single command! (For dev)
